@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Contact – Gamuna Foundation</title>
+  <link rel="stylesheet" href="css/styles.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&family=Lora:ital,wght@0,400;1,400&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <img src="assets/logo.png" alt="Gamuna Foundation Logo" class="logo-img"/>
+        <span>Gamuna Foundation</span>
+      </a>
+      <button class="nav-toggle" aria-label="Open menu">&#9776;</button>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="programs.html">Programs</a></li>
+        <li><a href="contact.html" class="active">Contact</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <section class="page-hero">
+    <div class="container">
+      <h1>Get In Touch</h1>
+      <p>Partner with us, volunteer, or simply reach out — we'd love to hear from you.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container two-col">
+
+      <div class="contact-info">
+        <h2>Contact Details</h2>
+        <div class="contact-block">
+          <p class="contact-label">Organization</p>
+          <p>Gamuna Foundation</p>
+        </div>
+        <div class="contact-block">
+          <p class="contact-label">Representative</p>
+          <p>Nicholas Gamuna</p>
+        </div>
+        <div class="contact-block">
+          <p class="contact-label">Email</p>
+          <p><a href="mailto:gamunafoundation@gmail.com">gamunafoundation@gmail.com</a></p>
+        </div>
+        <div class="contact-block">
+          <p class="contact-label">Phone</p>
+          <p><a href="tel:+67579888330">(675) 7988 8330</a></p>
+        </div>
+        <div class="contact-block">
+          <p class="contact-label">Location</p>
+          <p>Madang Province, Papua New Guinea</p>
+        </div>
+      </div>
+
+      <div class="contact-form-wrap">
+        <h2>Send a Message</h2>
+        <p style="margin-bottom:1rem;color:#555;font-size:0.95rem;">This form sends an email directly to our team. We aim to respond within 3 business days.</p>
+        <!-- Formspree-powered form — no backend server needed -->
+        <form class="contact-form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+          <label for="name">Your Name</label>
+          <input type="text" id="name" name="name" placeholder="Full name" required/>
+
+          <label for="email">Your Email</label>
+          <input type="email" id="email" name="email" placeholder="your@email.com" required/>
+
+          <label for="subject">Subject</label>
+          <input type="text" id="subject" name="subject" placeholder="How can we help?"/>
+
+          <label for="message">Message</label>
+          <textarea id="message" name="message" rows="5" placeholder="Write your message here..." required></textarea>
+
+          <button type="submit" class="btn btn-primary" style="width:100%;margin-top:0.5rem;">Send Message</button>
+        </form>
+      </div>
+
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <img src="assets/logo.png" alt="Logo" class="footer-logo"/>
+        <p>Gamuna Foundation<br/>Madang Province, Papua New Guinea</p>
+      </div>
+      <div class="footer-links">
+        <a href="about.html">About</a>
+        <a href="programs.html">Programs</a>
+        <a href="contact.html">Contact</a>
+      </div>
+      <div class="footer-contact">
+        <p>📧 <a href="mailto:gamunafoundation@gmail.com">gamunafoundation@gmail.com</a></p>
+        <p>📞 (675) 7988 8330</p>
+      </div>
+    </div>
+    <p class="footer-copy">&copy; 2026 Gamuna Foundation. All rights reserved.</p>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
