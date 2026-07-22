@@ -911,3 +911,122 @@ body {
     gap: 1rem;
   }
 }
+
+/* =========================================
+   NEWS PAGE
+   ========================================= */
+
+.news-section { background: var(--white); }
+
+.news-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.news-item {
+  display: flex;
+  gap: 1.5rem;
+  background: var(--white);
+  border-radius: 8px;
+  padding: 1.75rem;
+  box-shadow: var(--shadow);
+  border-left: 6px solid var(--gold);
+  transition: transform 0.2s, box-shadow 0.2s;
+  align-items: flex-start;
+}
+
+.news-item:hover {
+  transform: translateX(4px);
+  box-shadow: 0 6px 28px rgba(232,184,75,0.25);
+}
+
+.news-date {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(160deg, var(--blue-mid), var(--green-dark));
+  color: var(--white);
+  border-radius: 6px;
+  padding: 0.75rem 1rem;
+  min-width: 64px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.news-month {
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+
+.news-day {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1;
+  margin: 0.1rem 0;
+}
+
+.news-year {
+  font-family: var(--font-display);
+  font-size: 0.65rem;
+  opacity: 0.75;
+  letter-spacing: 0.05em;
+}
+
+.news-body { flex: 1; }
+
+.news-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--green-dark);
+  margin: 0.4rem 0 0.5rem;
+}
+
+.news-text {
+  font-size: 0.95rem;
+  color: var(--text-mid);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.news-badge {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+}
+
+.badge-announcement { background: #e3f2fd; color: #1565c0; }
+.badge-milestone     { background: #e8f5e9; color: #2e7d32; }
+.badge-media         { background: #fff3e0; color: #e65100; }
+.badge-partnership   { background: #ede7f6; color: #4527a0; }
+
+@media (max-width: 600px) {
+  .news-item {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .news-date {
+    flex-direction: row;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 0.5rem 1rem;
+    justify-content: flex-start;
+  }
+
+  .news-day { font-size: 1.4rem; }
+}
