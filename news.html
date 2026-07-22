@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>News – Gamuna Foundation</title>
+  <link rel="stylesheet" href="css/styles.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&family=Lora:ital,wght@0,400;1,400&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <img src="assets/logo.png" alt="Gamuna Foundation Logo" class="logo-img"/>
+        <span>Gamuna Foundation</span>
+      </a>
+      <button class="nav-toggle" aria-label="Open menu">&#9776;</button>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="programs.html">Programs</a></li>
+        <li><a href="news.html" class="active">News</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <section class="page-hero">
+    <div class="container">
+      <h1>News & Updates</h1>
+      <p>The latest from the Gamuna Foundation — announcements, milestones, and stories from the ground.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       NEWS FEED
+       HOW TO ADD A NEW NEWS POST:
+       1. Copy one entire <div class="news-item"> block below
+       2. Paste it directly under the opening <div class="news-list"> tag
+          (newest posts go at the top of the list)
+       3. Update the date, badge (optional), title, and text
+       4. Save and commit
+
+       BADGE OPTIONS (reuse or add your own in styles.css):
+         badge-announcement, badge-milestone, badge-media, badge-partnership
+  =============================================================== -->
+  <section class="section news-section">
+    <div class="container">
+      <div class="news-list" id="newsList">
+
+        <!-- ======= NEWS ITEM — copy this block to add a new post ======= -->
+        <div class="news-item">
+          <div class="news-date">
+            <span class="news-month">JUL</span>
+            <span class="news-day">22</span>
+            <span class="news-year">2026</span>
+          </div>
+          <div class="news-body">
+            <span class="news-badge badge-announcement">Announcement</span>
+            <h3 class="news-title">Gamuna Foundation Launches Official Website</h3>
+            <p class="news-text">We're excited to launch our new website, giving the public an easy way to learn about our programs, meet our team, and get in touch. This News page will keep you updated on everything happening at the Foundation beyond our scheduled program calendar.</p>
+          </div>
+        </div>
+        <!-- ======= END NEWS ITEM ======= -->
+
+        <!-- ======= NEWS ITEM — copy this block to add a new post ======= -->
+        <div class="news-item">
+          <div class="news-date">
+            <span class="news-month">JUN</span>
+            <span class="news-day">21</span>
+            <span class="news-year">2026</span>
+          </div>
+          <div class="news-body">
+            <span class="news-badge badge-milestone">Milestone</span>
+            <h3 class="news-title">Gamuna Foundation Officially Launched</h3>
+            <p class="news-text">The Gamuna Foundation was officially founded and launched in Madang Province, bringing together a full executive team and training committee to begin our mission of advocating, motivating, and inspiring the youth of Papua New Guinea.</p>
+          </div>
+        </div>
+        <!-- ======= END NEWS ITEM ======= -->
+
+      </div>
+
+      <!-- Show when no news posts exist -->
+      <div class="no-events" id="noNews" style="display:none;">
+        <p>📰 No news posts yet. Check back soon.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <img src="assets/logo.png" alt="Logo" class="footer-logo"/>
+        <p>Gamuna Foundation<br/>Madang Province, Papua New Guinea</p>
+      </div>
+      <div class="footer-links">
+        <a href="about.html">About</a>
+        <a href="programs.html">Programs</a>
+        <a href="news.html">News</a>
+        <a href="contact.html">Contact</a>
+      </div>
+      <div class="footer-contact">
+        <p>📧 <a href="mailto:stanissika@outlook.com">stanissika@outlook.com</a></p>
+        <p>📞 (675) 7988 8330</p>
+      </div>
+    </div>
+    <p class="footer-copy">&copy; 2026 Gamuna Foundation. All rights reserved.</p>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
