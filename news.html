@@ -29,61 +29,72 @@
   <section class="page-hero">
     <div class="container">
       <h1>News & Updates</h1>
-      <p>The latest from the Gamuna Foundation — announcements, milestones, and stories from the ground.</p>
+      <p>Announcements, milestones, and stories from the Gamuna Foundation.</p>
     </div>
   </section>
 
   <!-- ============================================================
        NEWS FEED
        HOW TO ADD A NEW NEWS POST:
-       1. Copy one entire <div class="news-item"> block below
-       2. Paste it directly under the opening <div class="news-list"> tag
-          (newest posts go at the top of the list)
-       3. Update the date, badge (optional), title, and text
+       1. Copy one entire <div class="news-item"> block
+       2. Paste it at the TOP of the list (so newest shows first)
+       3. Update the date, tag, title and body text
        4. Save and commit
 
-       BADGE OPTIONS (reuse or add your own in styles.css):
-         badge-announcement, badge-milestone, badge-media, badge-partnership
+       This is for general updates, announcements and milestones —
+       for the yearly calendar of workshops/seminars/outreach, use
+       the Upcoming/Past Events section on the Programs page instead.
   =============================================================== -->
   <section class="section news-section">
     <div class="container">
+      <h2 class="section-title">Latest News</h2>
+
       <div class="news-list" id="newsList">
 
         <!-- ======= NEWS ITEM — copy this block to add a new post ======= -->
         <div class="news-item">
-          <div class="news-date">
-            <span class="news-month">JUL</span>
-            <span class="news-day">22</span>
-            <span class="news-year">2026</span>
-          </div>
-          <div class="news-body">
-            <span class="news-badge badge-announcement">Announcement</span>
-            <h3 class="news-title">Gamuna Foundation Launches Official Website</h3>
-            <p class="news-text">We're excited to launch our new website, giving the public an easy way to learn about our programs, meet our team, and get in touch. This News page will keep you updated on everything happening at the Foundation beyond our scheduled program calendar.</p>
-          </div>
+          <span class="news-tag">Announcement</span>
+          <span class="news-date">July 22, 2026</span>
+          <h3 class="news-title">Gamuna Foundation Launches News & Updates Page</h3>
+          <p class="news-body">We've added this space to keep our community informed between events — announcements, partnership news, media coverage, and behind-the-scenes updates on our work across Madang Province.</p>
         </div>
         <!-- ======= END NEWS ITEM ======= -->
 
         <!-- ======= NEWS ITEM — copy this block to add a new post ======= -->
         <div class="news-item">
-          <div class="news-date">
-            <span class="news-month">JUN</span>
-            <span class="news-day">21</span>
-            <span class="news-year">2026</span>
-          </div>
-          <div class="news-body">
-            <span class="news-badge badge-milestone">Milestone</span>
-            <h3 class="news-title">Gamuna Foundation Officially Launched</h3>
-            <p class="news-text">The Gamuna Foundation was officially founded and launched in Madang Province, bringing together a full executive team and training committee to begin our mission of advocating, motivating, and inspiring the youth of Papua New Guinea.</p>
-          </div>
+          <span class="news-tag">Media Coverage</span>
+          <span class="news-date">May 21, 2026</span>
+          <h3 class="news-title">DWU Students, Student Rep Council & Gamuna Foundation Team Up for Community Outreach</h3>
+          <p class="news-body">Students from Divine Word University, the Student Representative Council, and the Gamuna Foundation joined forces on a donation drive and awareness programme for local communities. Founder Nicholas Gamuna spoke on the importance of respecting laws and keeping communities informed of civic responsibilities, with the group committing to continue awareness campaigns focused on the challenges facing today's youth.</p>
+          <a class="news-source" href="https://www.thenational.com.pg/university-students-support-communities-through-donationdrives-and-awareness-programmes/" target="_blank" rel="noopener">Read more at The National &rarr;</a>
+        </div>
+        <!-- ======= END NEWS ITEM ======= -->
+
+        <!-- ======= NEWS ITEM — copy this block to add a new post ======= -->
+        <div class="news-item">
+          <span class="news-tag">Feature Story</span>
+          <span class="news-date">May 2026</span>
+          <h3 class="news-title">The Story Behind the Gamuna Foundation</h3>
+          <p class="news-body">A feature piece traced the foundation's roots to founder Nicholas Gamuna's final year studying Social and Religious Studies at Divine Word University, and his time as DWU Madang Students Association President in 2025, where he saw firsthand the challenges facing local youth. The foundation is built on the idea of Holistic Human Development — nurturing people's physical, emotional, social, and spiritual wellbeing — and runs programmes spanning awareness campaigns on gender-based violence, law and order, health and education, plus a youth-led community policing initiative in the Sumkar District. The piece also noted a Donation Drive running from May 9th through the end of the month.</p>
+          <a class="news-source" href="https://pnghausbung.com/the-gamuna-foundation--a-holistic-mission-to-serve/" target="_blank" rel="noopener">Read more at PNG Haus Bung &rarr;</a>
+        </div>
+        <!-- ======= END NEWS ITEM ======= -->
+
+        <!-- ======= NEWS ITEM — copy this block to add a new post ======= -->
+        <div class="news-item">
+          <span class="news-tag">Media Coverage</span>
+          <span class="news-date">February 2026</span>
+          <h3 class="news-title">Gamuna Foundation Visits Beon Prison, Madang</h3>
+          <p class="news-body">Members of the Gamuna Foundation visited inmates at Beon Prison in Madang, carrying out awareness activities and donating clothes, food and drinks. Founder Nicholas Gamuna said the prison was chosen so youth in the programme could witness firsthand the consequences of crime, engage with inmates, and share messages of hope — reinforcing that there is always an opportunity to change and become a better person after prison.</p>
+          <a class="news-source" href="https://www.thenational.com.pg/prison-visit-makes-a-difference/" target="_blank" rel="noopener">Read more at The National &rarr;</a>
         </div>
         <!-- ======= END NEWS ITEM ======= -->
 
       </div>
 
       <!-- Show when no news posts exist -->
-      <div class="no-events" id="noNews" style="display:none;">
-        <p>📰 No news posts yet. Check back soon.</p>
+      <div class="no-news" id="noNews" style="display:none;">
+        <p>📰 No news posted yet. Check back soon or <a href="contact.html">contact us</a> for the latest updates.</p>
       </div>
 
     </div>
