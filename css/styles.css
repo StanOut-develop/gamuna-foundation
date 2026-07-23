@@ -118,7 +118,7 @@ body {
   align-items: center;
   background:
     linear-gradient(135deg, rgba(26,77,46,0.92) 0%, rgba(26,61,82,0.80) 60%, rgba(91,184,212,0.25) 100%),
-    url('https://images.unsplash.com/photo-1529390079861-591de354faf5?w=1400&q=80') center/cover no-repeat;
+    url('assets/hero-bg.jpg') center/cover no-repeat;
   padding: 6rem 1.5rem;
 }
 
@@ -893,6 +893,21 @@ body {
   padding: 3rem 1.5rem;
   color: var(--text-light);
   font-style: italic;
+}
+
+.news-source {
+  display: inline-block;
+  margin-top: 0.85rem;
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--blue-mid);
+  text-decoration: none;
+}
+
+.news-source:hover {
+  text-decoration: underline;
 }
 
 /* =========================================
