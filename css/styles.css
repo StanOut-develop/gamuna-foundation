@@ -118,7 +118,7 @@ body {
   align-items: center;
   background:
     linear-gradient(135deg, rgba(26,77,46,0.92) 0%, rgba(26,61,82,0.80) 60%, rgba(91,184,212,0.25) 100%),
-    url('assets/hero-bg.jpg') center/cover no-repeat;
+    url('../assets/hero-bg.jpg') center/cover no-repeat;
   padding: 6rem 1.5rem;
 }
 
