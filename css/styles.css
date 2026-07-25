@@ -373,6 +373,12 @@ body {
     url('../assets/about-bg.jpg') center/cover no-repeat;
 }
 
+.programs-hero {
+  background:
+    linear-gradient(135deg, rgba(26,77,46,0.90) 0%, rgba(26,61,82,0.82) 60%, rgba(30,85,112,0.75) 100%),
+    url('../assets/programs-and-events-bg.jpg') center/cover no-repeat;
+}
+
 /* ---- TWO COL ---- */
 .two-col {
   display: grid;
