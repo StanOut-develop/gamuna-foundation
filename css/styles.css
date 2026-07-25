@@ -367,6 +367,12 @@ body {
   color: rgba(255,255,255,0.8);
 }
 
+.about-hero {
+  background:
+    linear-gradient(135deg, rgba(26,77,46,0.90) 0%, rgba(26,61,82,0.82) 60%, rgba(30,85,112,0.75) 100%),
+    url('../assets/about-bg.jpg') center/cover no-repeat;
+}
+
 /* ---- TWO COL ---- */
 .two-col {
   display: grid;
