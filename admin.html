@@ -1,94 +1,210 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Gamuna Foundation Admin Dashboard</title>
-    <link rel="stylesheet" href="css/styles.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&family=Lora:ital,wght@0,400;1,400&display=swap" rel="stylesheet" />
-  </head>
-  <body class="admin-body">
-    <header class="admin-header">
-      <div class="container admin-header-inner">
-        <div>
-          <p class="eyebrow">Website management</p>
-          <h1>Gamuna Foundation Admin</h1>
-        </div>
-        <button id="logoutBtn" class="btn btn-outline">Log Out</button>
-      </div>
-    </header>
+/* ===== ADMIN PANEL STYLING ===== */
+.admin-body {
+  background: linear-gradient(135deg, #081b1a 0%, #102d2d 30%, #1d4b45 100%);
+  color: #eaf8f2;
+  min-height: 100vh;
+  font-family: var(--font-body);
+}
 
-    <main class="container admin-layout">
-      <section class="admin-summary">
-        <div class="summary-card">
-          <span class="summary-label">News</span>
-          <strong id="newsCount">0</strong>
-        </div>
-        <div class="summary-card">
-          <span class="summary-label">Members</span>
-          <strong id="memberCount">0</strong>
-        </div>
-        <div class="summary-card">
-          <span class="summary-label">Notices</span>
-          <strong id="noticeCount">0</strong>
-        </div>
-      </section>
+.admin-header {
+  background: rgba(13, 26, 25, 0.9);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  backdrop-filter: blur(10px);
+}
 
-      <section class="admin-panels">
-        <div class="panel">
-          <h2>Add News</h2>
-          <form id="newsForm" class="admin-form">
-            <input type="text" name="title" placeholder="News title" required />
-            <input type="text" name="summary" placeholder="Short summary" />
-            <textarea name="content" rows="4" placeholder="Content" required></textarea>
-            <input type="text" name="tag" placeholder="Tag (Announcement, Media Coverage...)" />
-            <input type="text" name="date" placeholder="Date" />
-            <input type="url" name="source" placeholder="Source link (optional)" />
-            <button type="submit" class="btn btn-primary">Publish News</button>
-          </form>
-        </div>
+.admin-header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.2rem 1.5rem;
+}
 
-        <div class="panel">
-          <h2>Add Member</h2>
-          <form id="memberForm" class="admin-form">
-            <input type="text" name="name" placeholder="Member name" required />
-            <input type="text" name="role" placeholder="Role" required />
-            <input type="url" name="image_url" placeholder="Profile image URL" />
-            <textarea name="bio" rows="3" placeholder="Short bio"></textarea>
-            <button type="submit" class="btn btn-primary">Save Member</button>
-          </form>
-        </div>
+.admin-header h1 {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 3vw, 2.5rem);
+  color: var(--white);
+}
 
-        <div class="panel">
-          <h2>Post Notice</h2>
-          <form id="noticeForm" class="admin-form">
-            <input type="text" name="title" placeholder="Notice title" required />
-            <textarea name="message" rows="4" placeholder="Notice message" required></textarea>
-            <input type="text" name="category" placeholder="Category" />
-            <input type="text" name="date" placeholder="Date" />
-            <button type="submit" class="btn btn-primary">Publish Notice</button>
-          </form>
-        </div>
-      </section>
+.admin-layout {
+  padding: 2rem 1.5rem 4rem;
+}
 
-      <section class="admin-listings">
-        <div class="panel panel-wide">
-          <h2>News Posts</h2>
-          <div id="newsList" class="data-list"></div>
-        </div>
+.admin-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
 
-        <div class="panel panel-wide">
-          <h2>Members</h2>
-          <div id="memberList" class="data-list"></div>
-        </div>
+.admin-grid.two-column {
+  grid-template-columns: 1fr 1fr;
+}
 
-        <div class="panel panel-wide">
-          <h2>Notices</h2>
-          <div id="noticeList" class="data-list"></div>
-        </div>
-      </section>
-    </main>
+.admin-card {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 18px;
+  box-shadow: 0 18px 45px rgba(0,0,0,0.2);
+  padding: 1.4rem;
+}
 
-    <script src="js/admin.js"></script>
-  </body>
-</html>
+.admin-card.full-width {
+  width: 100%;
+}
+
+.card-header {
+  margin-bottom: 1rem;
+}
+
+.card-header h2,
+.content-panel-grid h3 {
+  font-family: var(--font-display);
+  color: #f6f8f6;
+  font-size: 1.25rem;
+  margin-bottom: 0.35rem;
+}
+
+.admin-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.admin-form label {
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #bfe2cf;
+  margin-top: 0.35rem;
+}
+
+.admin-form input,
+.admin-form textarea {
+  width: 100%;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 10px;
+  background: rgba(255,255,255,0.04);
+  color: #f2f8f4;
+  padding: 0.8rem 0.9rem;
+  font-family: var(--font-body);
+  font-size: 1rem;
+}
+
+.admin-form textarea {
+  min-height: 90px;
+  resize: vertical;
+}
+
+.admin-form input:focus,
+.admin-form textarea:focus {
+  outline: 2px solid rgba(91,184,212,0.8);
+  border-color: transparent;
+}
+
+.spacing-top {
+  margin-top: 1.5rem;
+}
+
+.eyebrow {
+  color: #9ee3c7;
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  font-weight: 700;
+  font-family: var(--font-display);
+}
+
+.btn {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  padding: 0.8rem 1.2rem;
+  cursor: pointer;
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  transition: all 0.2s ease;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #f7c864, #e9a62d);
+  color: #15362f;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 20px rgba(233,166,45,0.25);
+}
+
+.btn-outline {
+  background: transparent;
+  border-color: rgba(255,255,255,0.2);
+  color: var(--white);
+}
+
+.btn-outline:hover {
+  background: rgba(255,255,255,0.04);
+}
+
+.btn.small {
+  font-size: 0.65rem;
+  padding: 0.45rem 0.7rem;
+}
+
+.content-panel-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.data-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  margin-top: 0.8rem;
+}
+
+.mini-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  padding: 0.85rem 0.9rem;
+}
+
+.mini-card strong {
+  display: block;
+  color: #f7faf7;
+  margin-bottom: 0.3rem;
+}
+
+.mini-card p {
+  color: #d9efe3;
+  font-size: 0.94rem;
+  line-height: 1.5;
+  margin-bottom: 0.5rem;
+}
+
+.empty-state {
+  color: #c4f1db;
+  opacity: 0.8;
+  font-style: italic;
+}
+
+@media (max-width: 768px) {
+  .admin-grid.two-column {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-header-inner {
+    flex-direction: column;
+    gap: 0.8rem;
+    align-items: flex-start;
+  }
+}

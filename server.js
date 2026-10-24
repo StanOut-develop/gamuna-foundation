@@ -18,11 +18,43 @@ const SESSION_SECRET = process.env.SESSION_SECRET || 'gamuna-foundation-secret';
 
 function getDefaultStore() {
   return {
-    adminUsers: [
+    settings: {
+      siteName: 'Gamuna Foundation',
+      tagline: 'Youth Empowerment • Madang Province, PNG',
+      email: 'gamunafoundation@gmail.com',
+      phone: '(675) 7988 8330',
+      facebook: 'https://www.facebook.com/profile.php?id=61585581315098',
+      address: 'Madang Province, Papua New Guinea'
+    },
+    home: {
+      eyebrow: 'Est. 2026 · Madang Province, PNG',
+      heroTitle: 'Advocate\nMotivate\nInspire',
+      heroSubtitle: 'Empowering the youth of Papua New Guinea through education, advocacy, and community action.',
+      missionLabel: 'Our Mission',
+      missionText: 'To empower young people through education, advocacy, and community engagement, enabling them to overcome challenges and achieve their full potential.'
+    },
+    about: {
+      heading: 'About Us',
+      overview: 'Who we are, what drives us, and the people behind the mission.',
+      vision: 'To create a vibrant and empowered generation of young leaders and communities who contribute positively to society, fostering sustainable development and community resilience in Madang Province and beyond.',
+      mission: 'To empower young people through education, advocacy, and community engagement, enabling them to overcome challenges and achieve their full potential.',
+      location: 'We operate in the heart of Madang Province, Papua New Guinea, engaging directly with both urban and rural communities to understand their unique challenges.'
+    },
+    programs: [
       {
         id: 1,
-        username: ADMIN_USERNAME,
-        password_hash: bcrypt.hashSync(ADMIN_PASSWORD, 10)
+        title: 'Youth Leadership Development',
+        description: 'Leadership training, mentorship, and confidence-building support for young people in Madang and surrounding communities.'
+      },
+      {
+        id: 2,
+        title: 'Education & Mentorship',
+        description: 'Support for students, career guidance, and access to opportunities that help young people grow academically and socially.'
+      },
+      {
+        id: 3,
+        title: 'Community Outreach & Service',
+        description: 'Volunteer outreach, donation drives, and practical service projects that connect youth with community action.'
       }
     ],
     news: [
@@ -30,19 +62,10 @@ function getDefaultStore() {
         id: 1,
         title: 'Gamuna Foundation Launches News & Updates Page',
         summary: 'We have added this space to keep our community informed between events.',
-        content: 'We have added a space to keep our community informed between events — announcements, partnership news, media coverage, and behind-the-scenes updates on our work and mission.',
+        content: 'We have added this space to keep our community informed between events — announcements, partnership news, media coverage, and behind-the-scenes updates on our work and mission.',
         tag: 'Announcement',
         date: 'July 22, 2026',
         source: ''
-      }
-    ],
-    members: [
-      {
-        id: 1,
-        name: 'Nicholas Gamuna',
-        role: 'President',
-        image_url: 'assets/team/nicholas-gamuna.jpg',
-        bio: 'Founder and leader of the foundation.'
       }
     ],
     notices: [
@@ -70,31 +93,21 @@ function ensureStoreFile() {
       throw new Error('Invalid data store');
     }
 
-    if (!Array.isArray(parsed.adminUsers)) parsed.adminUsers = [];
-    if (!Array.isArray(parsed.news)) parsed.news = [];
-    if (!Array.isArray(parsed.members)) parsed.members = [];
-    if (!Array.isArray(parsed.notices)) parsed.notices = [];
+    const defaults = getDefaultStore();
 
-    const defaultStore = getDefaultStore();
-
-    if (!parsed.adminUsers.length) {
-      parsed.adminUsers = defaultStore.adminUsers;
+    for (const key of ['settings', 'home', 'about', 'programs', 'news', 'notices']) {
+      if (!(key in parsed)) parsed[key] = defaults[key];
     }
 
-    if (!parsed.news.length) {
-      parsed.news = defaultStore.news;
-    }
+    if (!parsed.settings || typeof parsed.settings !== 'object') parsed.settings = defaults.settings;
+    if (!parsed.home || typeof parsed.home !== 'object') parsed.home = defaults.home;
+    if (!parsed.about || typeof parsed.about !== 'object') parsed.about = defaults.about;
+    if (!Array.isArray(parsed.programs)) parsed.programs = defaults.programs;
+    if (!Array.isArray(parsed.news)) parsed.news = defaults.news;
+    if (!Array.isArray(parsed.notices)) parsed.notices = defaults.notices;
 
-    if (!parsed.members.length) {
-      parsed.members = defaultStore.members;
-    }
-
-    if (!parsed.notices.length) {
-      parsed.notices = defaultStore.notices;
-    }
-
-    const existingUser = parsed.adminUsers.find(user => user.username === ADMIN_USERNAME);
-    if (!existingUser) {
+    if (!parsed.adminUsers) parsed.adminUsers = [{ id: 1, username: ADMIN_USERNAME, password_hash: bcrypt.hashSync(ADMIN_PASSWORD, 10) }];
+    if (!parsed.adminUsers.some(user => user.username === ADMIN_USERNAME)) {
       parsed.adminUsers.push({
         id: Date.now(),
         username: ADMIN_USERNAME,
@@ -105,9 +118,9 @@ function ensureStoreFile() {
     fs.writeFileSync(dataFile, JSON.stringify(parsed, null, 2), 'utf8');
     return parsed;
   } catch (error) {
-    const defaultStore = getDefaultStore();
-    fs.writeFileSync(dataFile, JSON.stringify(defaultStore, null, 2), 'utf8');
-    return defaultStore;
+    const defaults = getDefaultStore();
+    fs.writeFileSync(dataFile, JSON.stringify(defaults, null, 2), 'utf8');
+    return defaults;
   }
 }
 
@@ -156,7 +169,7 @@ app.post('/api/admin/login', (req, res) => {
     return res.status(400).json({ message: 'Username and password are required.' });
   }
 
-  const user = store.adminUsers.find(item => item.username === username);
+  const user = (store.adminUsers || []).find(item => item.username === username);
   if (!user) {
     return res.status(401).json({ message: 'Invalid username or password.' });
   }
@@ -189,16 +202,48 @@ app.get('/api/admin/session', (req, res) => {
   });
 });
 
-app.get('/api/dashboard', requireAdmin, (req, res) => {
-  res.json({
-    news: store.news.length,
-    members: store.members.length,
-    notices: store.notices.length
-  });
+app.get('/api/site-content', (req, res) => {
+  res.json(store);
+});
+
+app.post('/api/site-content', requireAdmin, (req, res) => {
+  const incoming = req.body || {};
+  store = { ...store, ...incoming };
+  saveStore();
+  return res.json(store);
+});
+
+app.post('/api/settings', requireAdmin, (req, res) => {
+  store.settings = { ...store.settings, ...(req.body || {}) };
+  saveStore();
+  return res.json(store.settings);
+});
+
+app.post('/api/home', requireAdmin, (req, res) => {
+  store.home = { ...store.home, ...(req.body || {}) };
+  saveStore();
+  return res.json(store.home);
+});
+
+app.post('/api/about', requireAdmin, (req, res) => {
+  store.about = { ...store.about, ...(req.body || {}) };
+  saveStore();
+  return res.json(store.about);
+});
+
+app.post('/api/programs', requireAdmin, (req, res) => {
+  const incoming = Array.isArray(req.body) ? req.body : [req.body];
+  store.programs = incoming.filter(Boolean);
+  saveStore();
+  return res.json(store.programs);
+});
+
+app.get('/api/programs', (req, res) => {
+  res.json(store.programs || []);
 });
 
 app.get('/api/news', (req, res) => {
-  res.json(store.news.slice().sort((a, b) => Number(b.id) - Number(a.id)));
+  res.json((store.news || []).slice().sort((a, b) => Number(b.id) - Number(a.id)));
 });
 
 app.post('/api/news', requireAdmin, (req, res) => {
@@ -209,7 +254,7 @@ app.post('/api/news', requireAdmin, (req, res) => {
   }
 
   const entry = {
-    id: nextId(store.news),
+    id: nextId(store.news || []),
     title: title.trim(),
     summary: summary ? summary.trim() : '',
     content: content.trim(),
@@ -218,7 +263,7 @@ app.post('/api/news', requireAdmin, (req, res) => {
     source: source ? source.trim() : ''
   };
 
-  store.news.unshift(entry);
+  store.news = [entry, ...(store.news || [])];
   saveStore();
   return res.status(201).json(entry);
 });
@@ -231,7 +276,7 @@ app.put('/api/news/:id', requireAdmin, (req, res) => {
     return res.status(400).json({ message: 'Title and content are required.' });
   }
 
-  const index = store.news.findIndex(item => Number(item.id) === id);
+  const index = (store.news || []).findIndex(item => Number(item.id) === id);
   if (index === -1) {
     return res.status(404).json({ message: 'News item not found.' });
   }
@@ -256,73 +301,13 @@ app.delete('/api/news/:id', requireAdmin, (req, res) => {
     return res.status(400).json({ message: 'Invalid news id.' });
   }
 
-  store.news = store.news.filter(item => Number(item.id) !== id);
-  saveStore();
-  return res.json({ success: true, id });
-});
-
-app.get('/api/members', (req, res) => {
-  res.json(store.members.slice().sort((a, b) => Number(b.id) - Number(a.id)));
-});
-
-app.post('/api/members', requireAdmin, (req, res) => {
-  const { name, role, image_url, bio } = req.body || {};
-
-  if (!name || !role) {
-    return res.status(400).json({ message: 'Name and role are required.' });
-  }
-
-  const entry = {
-    id: nextId(store.members),
-    name: name.trim(),
-    role: role.trim(),
-    image_url: image_url ? image_url.trim() : 'assets/team/placeholder.png',
-    bio: bio ? bio.trim() : ''
-  };
-
-  store.members.unshift(entry);
-  saveStore();
-  return res.status(201).json(entry);
-});
-
-app.put('/api/members/:id', requireAdmin, (req, res) => {
-  const id = Number(req.params.id);
-  const { name, role, image_url, bio } = req.body || {};
-
-  if (!id || !name || !role) {
-    return res.status(400).json({ message: 'Name and role are required.' });
-  }
-
-  const index = store.members.findIndex(item => Number(item.id) === id);
-  if (index === -1) {
-    return res.status(404).json({ message: 'Member not found.' });
-  }
-
-  store.members[index] = {
-    ...store.members[index],
-    name: name.trim(),
-    role: role.trim(),
-    image_url: image_url ? image_url.trim() : 'assets/team/placeholder.png',
-    bio: bio ? bio.trim() : ''
-  };
-
-  saveStore();
-  return res.json(store.members[index]);
-});
-
-app.delete('/api/members/:id', requireAdmin, (req, res) => {
-  const id = Number(req.params.id);
-  if (!id) {
-    return res.status(400).json({ message: 'Invalid member id.' });
-  }
-
-  store.members = store.members.filter(item => Number(item.id) !== id);
+  store.news = (store.news || []).filter(item => Number(item.id) !== id);
   saveStore();
   return res.json({ success: true, id });
 });
 
 app.get('/api/notices', (req, res) => {
-  res.json(store.notices.slice().sort((a, b) => Number(b.id) - Number(a.id)));
+  res.json((store.notices || []).slice().sort((a, b) => Number(b.id) - Number(a.id)));
 });
 
 app.post('/api/notices', requireAdmin, (req, res) => {
@@ -333,14 +318,14 @@ app.post('/api/notices', requireAdmin, (req, res) => {
   }
 
   const entry = {
-    id: nextId(store.notices),
+    id: nextId(store.notices || []),
     title: title.trim(),
     message: message.trim(),
     category: category ? category.trim() : 'General',
     date: date ? date.trim() : new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
   };
 
-  store.notices.unshift(entry);
+  store.notices = [entry, ...(store.notices || [])];
   saveStore();
   return res.status(201).json(entry);
 });
@@ -353,7 +338,7 @@ app.put('/api/notices/:id', requireAdmin, (req, res) => {
     return res.status(400).json({ message: 'Title and message are required.' });
   }
 
-  const index = store.notices.findIndex(item => Number(item.id) === id);
+  const index = (store.notices || []).findIndex(item => Number(item.id) === id);
   if (index === -1) {
     return res.status(404).json({ message: 'Notice not found.' });
   }
@@ -376,7 +361,7 @@ app.delete('/api/notices/:id', requireAdmin, (req, res) => {
     return res.status(400).json({ message: 'Invalid notice id.' });
   }
 
-  store.notices = store.notices.filter(item => Number(item.id) !== id);
+  store.notices = (store.notices || []).filter(item => Number(item.id) !== id);
   saveStore();
   return res.json({ success: true, id });
 });
@@ -393,3 +378,5 @@ app.listen(port, () => {
   console.log(`Gamuna Foundation admin app is running on http://localhost:${port}`);
   console.log(`Default admin login: ${ADMIN_USERNAME} / ${ADMIN_PASSWORD}`);
 });
+
+module.exports = { app, getDefaultStore };

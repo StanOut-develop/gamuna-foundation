@@ -19,72 +19,132 @@
     </header>
 
     <main class="container admin-layout">
-      <section class="admin-summary">
-        <div class="summary-card">
-          <span class="summary-label">News</span>
-          <strong id="newsCount">0</strong>
+      <section class="admin-grid">
+        <div class="admin-card">
+          <div class="card-header">
+            <h2>Site Settings</h2>
+          </div>
+          <form id="settingsForm" class="admin-form">
+            <label>Site Name</label>
+            <input type="text" name="siteName" />
+            <label>Tagline</label>
+            <input type="text" name="tagline" />
+            <label>Email</label>
+            <input type="email" name="email" />
+            <label>Phone</label>
+            <input type="text" name="phone" />
+            <label>Facebook</label>
+            <input type="url" name="facebook" />
+            <label>Address</label>
+            <input type="text" name="address" />
+            <button type="submit" class="btn btn-primary">Save Settings</button>
+          </form>
         </div>
-        <div class="summary-card">
-          <span class="summary-label">Members</span>
-          <strong id="memberCount">0</strong>
+
+        <div class="admin-card">
+          <div class="card-header">
+            <h2>Home Page</h2>
+          </div>
+          <form id="homeForm" class="admin-form">
+            <label>Eyebrow</label>
+            <input type="text" name="eyebrow" />
+            <label>Hero Title</label>
+            <textarea name="heroTitle" rows="3"></textarea>
+            <label>Hero Subtitle</label>
+            <textarea name="heroSubtitle" rows="3"></textarea>
+            <label>Mission Label</label>
+            <input type="text" name="missionLabel" />
+            <label>Mission Text</label>
+            <textarea name="missionText" rows="3"></textarea>
+            <button type="submit" class="btn btn-primary">Save Home</button>
+          </form>
         </div>
-        <div class="summary-card">
-          <span class="summary-label">Notices</span>
-          <strong id="noticeCount">0</strong>
+
+        <div class="admin-card">
+          <div class="card-header">
+            <h2>About Page</h2>
+          </div>
+          <form id="aboutForm" class="admin-form">
+            <label>Heading</label>
+            <input type="text" name="heading" />
+            <label>Overview</label>
+            <textarea name="overview" rows="3"></textarea>
+            <label>Vision</label>
+            <textarea name="vision" rows="4"></textarea>
+            <label>Mission</label>
+            <textarea name="mission" rows="4"></textarea>
+            <label>Location</label>
+            <textarea name="location" rows="3"></textarea>
+            <button type="submit" class="btn btn-primary">Save About</button>
+          </form>
         </div>
       </section>
 
-      <section class="admin-panels">
-        <div class="panel">
-          <h2>Add News</h2>
+      <section class="admin-grid two-column">
+        <div class="admin-card">
+          <div class="card-header">
+            <h2>Programs</h2>
+          </div>
+          <form id="programsForm" class="admin-form">
+            <label>Program list (one item per line)</label>
+            <textarea name="programsText" rows="10" placeholder="Program title | description"></textarea>
+            <button type="submit" class="btn btn-primary">Save Programs</button>
+          </form>
+        </div>
+
+        <div class="admin-card">
+          <div class="card-header">
+            <h2>News & Notices</h2>
+          </div>
           <form id="newsForm" class="admin-form">
-            <input type="text" name="title" placeholder="News title" required />
-            <input type="text" name="summary" placeholder="Short summary" />
-            <textarea name="content" rows="4" placeholder="Content" required></textarea>
-            <input type="text" name="tag" placeholder="Tag (Announcement, Media Coverage...)" />
-            <input type="text" name="date" placeholder="Date" />
-            <input type="url" name="source" placeholder="Source link (optional)" />
-            <button type="submit" class="btn btn-primary">Publish News</button>
+            <label>News Title</label>
+            <input type="text" name="title" />
+            <label>Summary</label>
+            <input type="text" name="summary" />
+            <label>Content</label>
+            <textarea name="content" rows="4"></textarea>
+            <label>Tag</label>
+            <input type="text" name="tag" />
+            <label>Date</label>
+            <input type="text" name="date" />
+            <label>Source Link</label>
+            <input type="url" name="source" />
+            <button type="submit" class="btn btn-primary">Add News</button>
           </form>
-        </div>
 
-        <div class="panel">
-          <h2>Add Member</h2>
-          <form id="memberForm" class="admin-form">
-            <input type="text" name="name" placeholder="Member name" required />
-            <input type="text" name="role" placeholder="Role" required />
-            <input type="url" name="image_url" placeholder="Profile image URL" />
-            <textarea name="bio" rows="3" placeholder="Short bio"></textarea>
-            <button type="submit" class="btn btn-primary">Save Member</button>
-          </form>
-        </div>
-
-        <div class="panel">
-          <h2>Post Notice</h2>
-          <form id="noticeForm" class="admin-form">
-            <input type="text" name="title" placeholder="Notice title" required />
-            <textarea name="message" rows="4" placeholder="Notice message" required></textarea>
-            <input type="text" name="category" placeholder="Category" />
-            <input type="text" name="date" placeholder="Date" />
-            <button type="submit" class="btn btn-primary">Publish Notice</button>
+          <form id="noticeForm" class="admin-form spacing-top">
+            <label>Notice Title</label>
+            <input type="text" name="title" />
+            <label>Message</label>
+            <textarea name="message" rows="3"></textarea>
+            <label>Category</label>
+            <input type="text" name="category" />
+            <label>Date</label>
+            <input type="text" name="date" />
+            <button type="submit" class="btn btn-primary">Add Notice</button>
           </form>
         </div>
       </section>
 
       <section class="admin-listings">
-        <div class="panel panel-wide">
-          <h2>News Posts</h2>
-          <div id="newsList" class="data-list"></div>
-        </div>
-
-        <div class="panel panel-wide">
-          <h2>Members</h2>
-          <div id="memberList" class="data-list"></div>
-        </div>
-
-        <div class="panel panel-wide">
-          <h2>Notices</h2>
-          <div id="noticeList" class="data-list"></div>
+        <div class="admin-card full-width">
+          <div class="card-header">
+            <h2>Current Content</h2>
+          </div>
+          <div class="content-panel-grid">
+            <div>
+              <h3>News</h3>
+              <div id="newsList" class="data-list"></div>
+            </div>
+            <div>
+              <h3>Notices</h3>
+              <div id="noticeList" class="data-list"></div>
+            </div>
+            <div>
+              <h3>Programs</h3>
+              <div id="programList" class="data-list"></div>
+            </div>
+          </div>
         </div>
       </section>
     </main>
