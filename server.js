@@ -3,111 +3,132 @@ const path = require('path');
 const express = require('express');
 const session = require('express-session');
 const bcrypt = require('bcryptjs');
-const Database = require('better-sqlite3');
 
 const app = express();
 const port = process.env.PORT || 3000;
 const rootDir = __dirname;
 const dataDir = path.join(rootDir, 'data');
+const dataFile = path.join(dataDir, 'gamuna-data.json');
 
 fs.mkdirSync(dataDir, { recursive: true });
-
-const db = new Database(path.join(dataDir, 'gamuna.db'));
-db.pragma('journal_mode = WAL');
 
 const ADMIN_USERNAME = process.env.ADMIN_USERNAME || 'admin';
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'gamuna123';
 const SESSION_SECRET = process.env.SESSION_SECRET || 'gamuna-foundation-secret';
 
-function initializeDatabase() {
-  db.prepare(`
-    CREATE TABLE IF NOT EXISTS admin_users (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      username TEXT UNIQUE NOT NULL,
-      password_hash TEXT NOT NULL,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP
-    )
-  `).run();
+function getDefaultStore() {
+  return {
+    adminUsers: [
+      {
+        id: 1,
+        username: ADMIN_USERNAME,
+        password_hash: bcrypt.hashSync(ADMIN_PASSWORD, 10)
+      }
+    ],
+    news: [
+      {
+        id: 1,
+        title: 'Gamuna Foundation Launches News & Updates Page',
+        summary: 'We have added this space to keep our community informed between events.',
+        content: 'We have added a space to keep our community informed between events — announcements, partnership news, media coverage, and behind-the-scenes updates on our work and mission.',
+        tag: 'Announcement',
+        date: 'July 22, 2026',
+        source: ''
+      }
+    ],
+    members: [
+      {
+        id: 1,
+        name: 'Nicholas Gamuna',
+        role: 'President',
+        image_url: 'assets/team/nicholas-gamuna.jpg',
+        bio: 'Founder and leader of the foundation.'
+      }
+    ],
+    notices: [
+      {
+        id: 1,
+        title: 'Volunteer registration now open',
+        message: 'The foundation is welcoming volunteers for outreach and youth empowerment activities.',
+        category: 'Volunteer',
+        date: 'July 24, 2026'
+      }
+    ]
+  };
+}
 
-  db.prepare(`
-    CREATE TABLE IF NOT EXISTS news (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      title TEXT NOT NULL,
-      summary TEXT,
-      content TEXT NOT NULL,
-      tag TEXT,
-      date TEXT,
-      source TEXT,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP
-    )
-  `).run();
-
-  db.prepare(`
-    CREATE TABLE IF NOT EXISTS members (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      name TEXT NOT NULL,
-      role TEXT,
-      image_url TEXT,
-      bio TEXT,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP
-    )
-  `).run();
-
-  db.prepare(`
-    CREATE TABLE IF NOT EXISTS notices (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      title TEXT NOT NULL,
-      message TEXT NOT NULL,
-      category TEXT,
-      date TEXT,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP
-    )
-  `).run();
-
-  const defaultHash = bcrypt.hashSync(ADMIN_PASSWORD, 10);
-  db.prepare(`
-    INSERT OR IGNORE INTO admin_users (username, password_hash)
-    VALUES (?, ?)
-  `).run(ADMIN_USERNAME, defaultHash);
-
-  const existingNews = db.prepare('SELECT COUNT(*) AS count FROM news').get();
-  if (existingNews.count === 0) {
-    db.prepare(`
-      INSERT INTO news (title, summary, content, tag, date, source)
-      VALUES (?, ?, ?, ?, ?, ?)
-    `).run(
-      'Gamuna Foundation Launches News & Updates Page',
-      'We have added this space to keep our community informed between events.',
-      'We have added a space to keep our community informed between events — announcements, partnership news, media coverage, and behind-the-scenes updates on our work and mission.',
-      'Announcement',
-      'July 22, 2026',
-      ''
-    );
+function ensureStoreFile() {
+  if (!fs.existsSync(dataFile)) {
+    fs.writeFileSync(dataFile, JSON.stringify(getDefaultStore(), null, 2), 'utf8');
   }
 
-  const existingMembers = db.prepare('SELECT COUNT(*) AS count FROM members').get();
-  if (existingMembers.count === 0) {
-    db.prepare(`
-      INSERT INTO members (name, role, image_url, bio)
-      VALUES (?, ?, ?, ?)
-    `).run('Nicholas Gamuna', 'President', 'assets/team/nicholas-gamuna.jpg', 'Founder and leader of the foundation.');
-  }
+  try {
+    const raw = fs.readFileSync(dataFile, 'utf8');
+    const parsed = JSON.parse(raw);
 
-  const existingNotices = db.prepare('SELECT COUNT(*) AS count FROM notices').get();
-  if (existingNotices.count === 0) {
-    db.prepare(`
-      INSERT INTO notices (title, message, category, date)
-      VALUES (?, ?, ?, ?)
-    `).run(
-      'Volunteer registration now open',
-      'The foundation is welcoming volunteers for outreach and youth empowerment activities.',
-      'Volunteer',
-      'July 24, 2026'
-    );
+    if (!parsed || typeof parsed !== 'object') {
+      throw new Error('Invalid data store');
+    }
+
+    if (!Array.isArray(parsed.adminUsers)) parsed.adminUsers = [];
+    if (!Array.isArray(parsed.news)) parsed.news = [];
+    if (!Array.isArray(parsed.members)) parsed.members = [];
+    if (!Array.isArray(parsed.notices)) parsed.notices = [];
+
+    const defaultStore = getDefaultStore();
+
+    if (!parsed.adminUsers.length) {
+      parsed.adminUsers = defaultStore.adminUsers;
+    }
+
+    if (!parsed.news.length) {
+      parsed.news = defaultStore.news;
+    }
+
+    if (!parsed.members.length) {
+      parsed.members = defaultStore.members;
+    }
+
+    if (!parsed.notices.length) {
+      parsed.notices = defaultStore.notices;
+    }
+
+    const existingUser = parsed.adminUsers.find(user => user.username === ADMIN_USERNAME);
+    if (!existingUser) {
+      parsed.adminUsers.push({
+        id: Date.now(),
+        username: ADMIN_USERNAME,
+        password_hash: bcrypt.hashSync(ADMIN_PASSWORD, 10)
+      });
+    }
+
+    fs.writeFileSync(dataFile, JSON.stringify(parsed, null, 2), 'utf8');
+    return parsed;
+  } catch (error) {
+    const defaultStore = getDefaultStore();
+    fs.writeFileSync(dataFile, JSON.stringify(defaultStore, null, 2), 'utf8');
+    return defaultStore;
   }
 }
 
-initializeDatabase();
+let store = ensureStoreFile();
+
+function saveStore() {
+  fs.writeFileSync(dataFile, JSON.stringify(store, null, 2), 'utf8');
+}
+
+function nextId(list) {
+  const maxId = list.reduce((max, item) => Math.max(max, Number(item.id) || 0), 0);
+  return maxId + 1;
+}
+
+function requireAdmin(req, res, next) {
+  if (req.session && req.session.isAdmin) {
+    return next();
+  }
+
+  return res.status(401).json({ message: 'Unauthorized. Please log in.' });
+}
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json({ limit: '1mb' }));
@@ -124,14 +145,6 @@ app.use(
   })
 );
 
-function requireAdmin(req, res, next) {
-  if (req.session && req.session.isAdmin) {
-    return next();
-  }
-
-  return res.status(401).json({ message: 'Unauthorized. Please log in.' });
-}
-
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', app: 'Gamuna Foundation Admin API' });
 });
@@ -143,7 +156,7 @@ app.post('/api/admin/login', (req, res) => {
     return res.status(400).json({ message: 'Username and password are required.' });
   }
 
-  const user = db.prepare('SELECT * FROM admin_users WHERE username = ?').get(username);
+  const user = store.adminUsers.find(item => item.username === username);
   if (!user) {
     return res.status(401).json({ message: 'Invalid username or password.' });
   }
@@ -177,18 +190,15 @@ app.get('/api/admin/session', (req, res) => {
 });
 
 app.get('/api/dashboard', requireAdmin, (req, res) => {
-  const counts = {
-    news: db.prepare('SELECT COUNT(*) AS total FROM news').get().total,
-    members: db.prepare('SELECT COUNT(*) AS total FROM members').get().total,
-    notices: db.prepare('SELECT COUNT(*) AS total FROM notices').get().total
-  };
-
-  res.json(counts);
+  res.json({
+    news: store.news.length,
+    members: store.members.length,
+    notices: store.notices.length
+  });
 });
 
 app.get('/api/news', (req, res) => {
-  const rows = db.prepare('SELECT * FROM news ORDER BY created_at DESC').all();
-  res.json(rows);
+  res.json(store.news.slice().sort((a, b) => Number(b.id) - Number(a.id)));
 });
 
 app.post('/api/news', requireAdmin, (req, res) => {
@@ -198,22 +208,19 @@ app.post('/api/news', requireAdmin, (req, res) => {
     return res.status(400).json({ message: 'Title and content are required.' });
   }
 
-  const statement = db.prepare(`
-    INSERT INTO news (title, summary, content, tag, date, source)
-    VALUES (?, ?, ?, ?, ?, ?)
-  `);
+  const entry = {
+    id: nextId(store.news),
+    title: title.trim(),
+    summary: summary ? summary.trim() : '',
+    content: content.trim(),
+    tag: tag ? tag.trim() : 'Announcement',
+    date: date ? date.trim() : new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+    source: source ? source.trim() : ''
+  };
 
-  const result = statement.run(
-    title.trim(),
-    summary ? summary.trim() : '',
-    content.trim(),
-    tag ? tag.trim() : 'Announcement',
-    date ? date.trim() : new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
-    source ? source.trim() : ''
-  );
-
-  const created = db.prepare('SELECT * FROM news WHERE id = ?').get(result.lastInsertRowid);
-  return res.status(201).json(created);
+  store.news.unshift(entry);
+  saveStore();
+  return res.status(201).json(entry);
 });
 
 app.put('/api/news/:id', requireAdmin, (req, res) => {
@@ -224,24 +231,23 @@ app.put('/api/news/:id', requireAdmin, (req, res) => {
     return res.status(400).json({ message: 'Title and content are required.' });
   }
 
-  const statement = db.prepare(`
-    UPDATE news
-    SET title = ?, summary = ?, content = ?, tag = ?, date = ?, source = ?
-    WHERE id = ?
-  `);
+  const index = store.news.findIndex(item => Number(item.id) === id);
+  if (index === -1) {
+    return res.status(404).json({ message: 'News item not found.' });
+  }
 
-  statement.run(
-    title.trim(),
-    summary ? summary.trim() : '',
-    content.trim(),
-    tag ? tag.trim() : 'Announcement',
-    date ? date.trim() : new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
-    source ? source.trim() : '',
-    id
-  );
+  store.news[index] = {
+    ...store.news[index],
+    title: title.trim(),
+    summary: summary ? summary.trim() : '',
+    content: content.trim(),
+    tag: tag ? tag.trim() : 'Announcement',
+    date: date ? date.trim() : new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+    source: source ? source.trim() : ''
+  };
 
-  const updated = db.prepare('SELECT * FROM news WHERE id = ?').get(id);
-  return res.json(updated);
+  saveStore();
+  return res.json(store.news[index]);
 });
 
 app.delete('/api/news/:id', requireAdmin, (req, res) => {
@@ -250,13 +256,13 @@ app.delete('/api/news/:id', requireAdmin, (req, res) => {
     return res.status(400).json({ message: 'Invalid news id.' });
   }
 
-  db.prepare('DELETE FROM news WHERE id = ?').run(id);
-  res.json({ success: true, id });
+  store.news = store.news.filter(item => Number(item.id) !== id);
+  saveStore();
+  return res.json({ success: true, id });
 });
 
 app.get('/api/members', (req, res) => {
-  const rows = db.prepare('SELECT * FROM members ORDER BY created_at DESC').all();
-  res.json(rows);
+  res.json(store.members.slice().sort((a, b) => Number(b.id) - Number(a.id)));
 });
 
 app.post('/api/members', requireAdmin, (req, res) => {
@@ -266,20 +272,17 @@ app.post('/api/members', requireAdmin, (req, res) => {
     return res.status(400).json({ message: 'Name and role are required.' });
   }
 
-  const statement = db.prepare(`
-    INSERT INTO members (name, role, image_url, bio)
-    VALUES (?, ?, ?, ?)
-  `);
+  const entry = {
+    id: nextId(store.members),
+    name: name.trim(),
+    role: role.trim(),
+    image_url: image_url ? image_url.trim() : 'assets/team/placeholder.png',
+    bio: bio ? bio.trim() : ''
+  };
 
-  const result = statement.run(
-    name.trim(),
-    role.trim(),
-    image_url ? image_url.trim() : 'assets/team/placeholder.png',
-    bio ? bio.trim() : ''
-  );
-
-  const created = db.prepare('SELECT * FROM members WHERE id = ?').get(result.lastInsertRowid);
-  return res.status(201).json(created);
+  store.members.unshift(entry);
+  saveStore();
+  return res.status(201).json(entry);
 });
 
 app.put('/api/members/:id', requireAdmin, (req, res) => {
@@ -290,20 +293,21 @@ app.put('/api/members/:id', requireAdmin, (req, res) => {
     return res.status(400).json({ message: 'Name and role are required.' });
   }
 
-  db.prepare(`
-    UPDATE members
-    SET name = ?, role = ?, image_url = ?, bio = ?
-    WHERE id = ?
-  `).run(
-    name.trim(),
-    role.trim(),
-    image_url ? image_url.trim() : 'assets/team/placeholder.png',
-    bio ? bio.trim() : '',
-    id
-  );
+  const index = store.members.findIndex(item => Number(item.id) === id);
+  if (index === -1) {
+    return res.status(404).json({ message: 'Member not found.' });
+  }
 
-  const updated = db.prepare('SELECT * FROM members WHERE id = ?').get(id);
-  return res.json(updated);
+  store.members[index] = {
+    ...store.members[index],
+    name: name.trim(),
+    role: role.trim(),
+    image_url: image_url ? image_url.trim() : 'assets/team/placeholder.png',
+    bio: bio ? bio.trim() : ''
+  };
+
+  saveStore();
+  return res.json(store.members[index]);
 });
 
 app.delete('/api/members/:id', requireAdmin, (req, res) => {
@@ -312,13 +316,13 @@ app.delete('/api/members/:id', requireAdmin, (req, res) => {
     return res.status(400).json({ message: 'Invalid member id.' });
   }
 
-  db.prepare('DELETE FROM members WHERE id = ?').run(id);
-  res.json({ success: true, id });
+  store.members = store.members.filter(item => Number(item.id) !== id);
+  saveStore();
+  return res.json({ success: true, id });
 });
 
 app.get('/api/notices', (req, res) => {
-  const rows = db.prepare('SELECT * FROM notices ORDER BY created_at DESC').all();
-  res.json(rows);
+  res.json(store.notices.slice().sort((a, b) => Number(b.id) - Number(a.id)));
 });
 
 app.post('/api/notices', requireAdmin, (req, res) => {
@@ -328,20 +332,17 @@ app.post('/api/notices', requireAdmin, (req, res) => {
     return res.status(400).json({ message: 'Title and message are required.' });
   }
 
-  const statement = db.prepare(`
-    INSERT INTO notices (title, message, category, date)
-    VALUES (?, ?, ?, ?)
-  `);
+  const entry = {
+    id: nextId(store.notices),
+    title: title.trim(),
+    message: message.trim(),
+    category: category ? category.trim() : 'General',
+    date: date ? date.trim() : new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+  };
 
-  const result = statement.run(
-    title.trim(),
-    message.trim(),
-    category ? category.trim() : 'General',
-    date ? date.trim() : new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
-  );
-
-  const created = db.prepare('SELECT * FROM notices WHERE id = ?').get(result.lastInsertRowid);
-  return res.status(201).json(created);
+  store.notices.unshift(entry);
+  saveStore();
+  return res.status(201).json(entry);
 });
 
 app.put('/api/notices/:id', requireAdmin, (req, res) => {
@@ -352,20 +353,21 @@ app.put('/api/notices/:id', requireAdmin, (req, res) => {
     return res.status(400).json({ message: 'Title and message are required.' });
   }
 
-  db.prepare(`
-    UPDATE notices
-    SET title = ?, message = ?, category = ?, date = ?
-    WHERE id = ?
-  `).run(
-    title.trim(),
-    message.trim(),
-    category ? category.trim() : 'General',
-    date ? date.trim() : new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
-    id
-  );
+  const index = store.notices.findIndex(item => Number(item.id) === id);
+  if (index === -1) {
+    return res.status(404).json({ message: 'Notice not found.' });
+  }
 
-  const updated = db.prepare('SELECT * FROM notices WHERE id = ?').get(id);
-  return res.json(updated);
+  store.notices[index] = {
+    ...store.notices[index],
+    title: title.trim(),
+    message: message.trim(),
+    category: category ? category.trim() : 'General',
+    date: date ? date.trim() : new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+  };
+
+  saveStore();
+  return res.json(store.notices[index]);
 });
 
 app.delete('/api/notices/:id', requireAdmin, (req, res) => {
@@ -374,8 +376,9 @@ app.delete('/api/notices/:id', requireAdmin, (req, res) => {
     return res.status(400).json({ message: 'Invalid notice id.' });
   }
 
-  db.prepare('DELETE FROM notices WHERE id = ?').run(id);
-  res.json({ success: true, id });
+  store.notices = store.notices.filter(item => Number(item.id) !== id);
+  saveStore();
+  return res.json({ success: true, id });
 });
 
 app.get('/login.html', (req, res) => {
